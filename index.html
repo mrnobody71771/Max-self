@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>APEX SELF</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #040407;
+  --bg2:   #0a0a10;
+  --bg3:   #10101a;
+  --bg4:   #17172280;
+  --neon:  #39ff14;
+  --cyan:  #00e5ff;
+  --gold:  #ffc933;
+  --pink:  #ff2ef5;
+  --red:   #ff3535;
+  --text:  #dde0ee;
+  --text2: #6b6d8a;
+  --text3: #3a3a55;
+  --b1: rgba(57,255,20,0.12);
+  --b2: rgba(0,229,255,0.12);
+  --bg-glow-green: rgba(57,255,20,0.035);
+  --bg-glow-cyan: rgba(0,229,255,0.035);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Barlow',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* AMBIENT BACKGROUND */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 5%, var(--bg-glow-green) 0%, transparent 100%),
+    radial-gradient(ellipse 50% 40% at 85% 95%, var(--bg-glow-cyan) 0%, transparent 100%),
+    radial-gradient(ellipse 30% 30% at 50% 50%, rgba(57,255,20,0.015) 0%, transparent 100%);
+  pointer-events:none;z-index:0;
+}
+
+/* SCANLINES */
+body::after{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);
+  pointer-events:none;z-index:1;
+}
+
+/* ============ TOP NAV ============ */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:54px;
+  background:rgba(4,4,7,0.92);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(57,255,20,0.1);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 14px;
+}
+.nav-logo{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:20px;letter-spacing:5px;
+  background:linear-gradient(120deg,var(--neon) 0%,var(--cyan) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  text-decoration:none;
+}
+.nav-right{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
+.nav-right::-webkit-scrollbar{display:none;}
+.npill{
+  background:none;border:none;cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:11px;letter-spacing:1.5px;color:var(--text2);
+  padding:5px 9px;border-radius:4px;white-space:nowrap;
+  transition:all .2s;text-transform:uppercase;
+}
+.npill:hover,.npill.on{color:var(--neon);background:rgba(57,255,20,0.07);}
+
+/* ============ PAGES ============ */
+.page{display:none;padding:68px 14px 90px;position:relative;z-index:2;animation:fadeUp .22s ease both;}
+.page.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ============ QUOTE ============ */
+#quote{
+  background:linear-gradient(135deg,rgba(57,255,20,0.05),rgba(0,229,255,0.05));
+  border:1px solid rgba(57,255,20,0.1);
+  border-radius:8px;padding:11px 14px;margin-bottom:14px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:600;
+  font-size:13px;letter-spacing:.8px;color:var(--cyan);
+  text-align:center;line-height:1.45;
+}
+
+/* ============ NOFAP HERO ============ */
+#nofap-hero{
+  background:var(--bg2);
+  border:1px solid rgba(57,255,20,0.18);
+  border-radius:12px;padding:18px;margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+#nofap-hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--neon),var(--cyan),transparent);
+}
+.nofap-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.nofap-streak{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:56px;line-height:1;color:var(--neon);
+  text-shadow:0 0 30px rgba(57,255,20,0.4);
+}
+.nofap-label{font-size:10px;letter-spacing:2px;color:var(--text2);text-transform:uppercase;margin-top:2px;}
+.nofap-actions{display:flex;gap:8px;flex-direction:column;align-items:flex-end;}
+.nofap-best{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;
+  color:var(--gold);letter-spacing:1px;
+}
+.nofap-btns{display:flex;gap:8px;}
+
+/* ============ LEVEL CARD ============ */
+#level-card{
+  background:var(--bg2);border:1px solid rgba(255,201,51,0.2);
+  border-radius:12px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden;
+}
+#level-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--pink),transparent);
+}
+.lc-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px;}
+.lc-rank{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:26px;letter-spacing:3px;color:var(--gold);
+}
+.lc-xp{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;color:var(--text2);}
+.lc-today{font-size:10px;color:var(--gold);letter-spacing:1px;}
+.xpbar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.xpfill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold),var(--pink));
+  box-shadow:0 0 8px rgba(255,201,51,0.35);
+  transition:width .9s cubic-bezier(.4,0,.2,1);
+}
+
+/* ============ STAT GRID ============ */
+.stat4{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.scard{
+  background:var(--bg2);border:1px solid var(--b1);
+  border-radius:10px;padding:13px;position:relative;overflow:hidden;
+}
+.scard.c{border-color:var(--b2);}
+.scard.g{border-color:rgba(255,201,51,0.15);}
+.scard.p{border-color:rgba(255,46,245,0.15);}
+.scard::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--neon),transparent);
+}
+.scard.c::before{background:linear-gradient(90deg,var(--cyan),transparent);}
+.scard.g::before{background:linear-gradient(90deg,var(--gold),transparent);}
+.scard.p::before{background:linear-gradient(90deg,var(--pink),transparent);}
+.slabel{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:9px;letter-spacing:2px;color:var(--text2);text-transform:uppercase;margin-bottom:3px;}
+.sval{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:30px;line-height:1;color:var(--neon);}
+.scard.c .sval{color:var(--cyan);}
+.scard.g .sval{color:var(--gold);}
+.scard.p .sval{color:var(--pink);}
+.ssub{font-size:10px;color:var(--text2);margin-top:2px;}
+
+/* ============ DISCIPLINE METER ============ */
+#disc{
+  background:var(--bg2);border:1px solid var(--b1);
+  border-radius:10px;padding:14px;margin-bottom:14px;
+}
+.disc-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.disc-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;color:var(--text2);text-transform:uppercase;}
+.disc-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;color:var(--neon);}
+.discbar{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:6px;}
+.discfill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--neon),var(--cyan));box-shadow:0 0 10px rgba(57,255,20,0.3);transition:width .8s cubic-bezier(.4,0,.2,1);}
+.disc-tier{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;color:var(--neon);}
+
+/* ============ SECTION TITLES ============ */
+.stitle{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:10px;letter-spacing:3px;color:var(--text2);text-transform:uppercase;
+  margin:18px 0 10px;display:flex;align-items:center;gap:8px;
+}
+.stitle::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(57,255,20,0.1),transparent);}
+
+/* ============ TRACKER CARDS ============ */
+.tc{
+  background:var(--bg2);border:1px solid rgba(57,255,20,0.08);
+  border-radius:10px;margin-bottom:9px;overflow:hidden;
+  transition:border-color .2s;
+}
+.tc.done{border-color:rgba(57,255,20,0.32);}
+.tch{display:flex;align-items:center;gap:11px;padding:13px;cursor:pointer;}
+.tc.done .tch{background:rgba(57,255,20,0.025);}
+.tcicon{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--bg3);border:1px solid rgba(57,255,20,0.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;transition:all .2s;
+}
+.tc.done .tcicon{background:rgba(57,255,20,0.08);border-color:rgba(57,255,20,0.3);}
+.tci{flex:1;min-width:0;}
+.tcname{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.8px;color:var(--text);line-height:1.2;}
+.tcsub{font-size:11px;color:var(--text2);margin-top:1px;}
+.tccheck{
+  width:26px;height:26px;border-radius:6px;
+  border:2px solid rgba(57,255,20,0.2);
+  background:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;flex-shrink:0;
+}
+.tccheck.on{background:var(--neon);border-color:var(--neon);box-shadow:0 0 12px rgba(57,255,20,0.4);}
+.tccheck.on::after{content:'✓';font-size:13px;color:#000;font-weight:900;}
+.tcarrow{font-size:9px;color:var(--text2);flex-shrink:0;transition:transform .2s;}
+.tcarrow.open{transform:rotate(180deg);}
+.tcbody{display:none;padding:0 13px 13px;border-top:1px solid rgba(57,255,20,0.06);}
+.tcbody.open{display:block;}
+
+/* WHY BOX */
+.why{
+  background:var(--bg3);border-left:2px solid var(--cyan);
+  border-radius:0 6px 6px 0;padding:9px 11px;margin:11px 0 8px;
+  font-size:12px;color:var(--text2);line-height:1.6;
+}
+.why-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;color:var(--cyan);text-transform:uppercase;margin-bottom:3px;}
+
+/* ============ INPUTS ============ */
+.ilabel{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:10px;letter-spacing:1.5px;color:var(--text2);text-transform:uppercase;margin-bottom:4px;display:block;}
+input[type=text],input[type=number],input[type=time],select,textarea{
+  background:var(--bg3);border:1px solid rgba(57,255,20,0.1);
+  border-radius:6px;color:var(--text);
+  font-family:'Barlow',sans-serif;font-size:13px;
+  padding:8px 10px;outline:none;transition:border-color .2s;width:100%;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--neon);}
+textarea{resize:none;height:58px;}
+.irow{display:flex;gap:8px;flex-wrap:wrap;}
+.icol{flex:1;min-width:80px;}
+
+/* BUTTONS */
+.btn{
+  background:var(--neon);color:#000;
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:11px;letter-spacing:2px;border:none;
+  border-radius:6px;padding:9px 14px;cursor:pointer;
+  text-transform:uppercase;transition:all .2s;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.btn:active{transform:scale(0.97);}
+.btn:hover{box-shadow:0 0 16px rgba(57,255,20,0.35);}
+.btn.cy{background:var(--cyan);}
+.btn.cy:hover{box-shadow:0 0 16px rgba(0,229,255,0.35);}
+.btn.rd{background:var(--red);color:#fff;}
+.btn.gd{background:var(--gold);}
+.btn.gh{background:none;border:1px solid rgba(57,255,20,0.2);color:var(--text2);}
+.btn.gh:hover{border-color:var(--neon);color:var(--neon);box-shadow:none;}
+
+/* ============ WATER ============ */
+.water-num{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:48px;color:var(--cyan);line-height:1;
+  text-shadow:0 0 24px rgba(0,229,255,0.3);
+}
+.waterbar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:8px 0;}
+.waterfill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--cyan),#007bff);box-shadow:0 0 8px rgba(0,229,255,0.3);transition:width .4s;}
+.wbtns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;}
+.wbtn{
+  background:var(--bg3);border:1px solid var(--b2);color:var(--cyan);
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;
+  border-radius:6px;padding:10px 4px;cursor:pointer;text-align:center;
+  transition:all .2s;
+}
+.wbtn:active{transform:scale(0.95);background:rgba(0,229,255,0.1);}
+
+/* ============ SLIDERS ============ */
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:3px;
+  background:var(--bg3);border-radius:2px;outline:none;margin:8px 0;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;
+  border-radius:50%;background:var(--neon);cursor:pointer;
+  box-shadow:0 0 10px rgba(57,255,20,0.4);
+}
+.slider-row{display:flex;justify-content:space-between;font-size:9px;color:var(--text2);}
+.slider-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--neon);text-align:center;margin-top:2px;}
+
+/* ============ SUPPS / CHECKLIST ============ */
+.suppgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.suppitem{
+  background:var(--bg3);border:1px solid rgba(57,255,20,0.08);
+  border-radius:8px;padding:10px;display:flex;align-items:flex-start;gap:8px;
+  cursor:pointer;transition:all .2s;
+}
+.suppitem.on{border-color:rgba(57,255,20,0.35);background:rgba(57,255,20,0.04);}
+.suppck{
+  width:17px;height:17px;border-radius:3px;border:1.5px solid rgba(57,255,20,0.25);
+  flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.suppitem.on .suppck{background:var(--neon);border-color:var(--neon);}
+.suppitem.on .suppck::after{content:'✓';font-size:10px;color:#000;font-weight:900;}
+.suppname{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;line-height:1.2;}
+.suppdesc{font-size:10px;color:var(--text2);margin-top:1px;}
+
+/* ============ PROGRESS PAGE ============ */
+.pr-board{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.pritem{
+  background:var(--bg2);border:1px solid rgba(255,201,51,0.12);
+  border-radius:10px;padding:14px;text-align:center;
+}
+.prlift{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;color:var(--text2);text-transform:uppercase;}
+.prval{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;color:var(--gold);margin-top:2px;}
+.prunit{font-size:9px;color:var(--text2);}
+.prinput{margin-top:8px;}
+.prinput input{font-size:12px;padding:6px 8px;text-align:center;}
+
+/* ============ HEATMAP ============ */
+#heatmap-wrap{overflow-x:auto;padding-bottom:4px;}
+#heatmap{display:flex;flex-direction:column;gap:3px;}
+.hm-row{display:flex;gap:3px;}
+.hm-cell{
+  width:11px;height:11px;border-radius:2px;
+  background:var(--bg3);cursor:pointer;flex-shrink:0;
+  transition:all .1s;
+}
+.hm-cell:hover{transform:scale(1.3);}
+.hm-cell[data-s="1"]{background:rgba(57,255,20,0.18);}
+.hm-cell[data-s="2"]{background:rgba(57,255,20,0.38);}
+.hm-cell[data-s="3"]{background:rgba(57,255,20,0.58);}
+.hm-cell[data-s="4"]{background:rgba(57,255,20,0.78);}
+.hm-cell[data-s="5"]{background:var(--neon);box-shadow:0 0 4px rgba(57,255,20,0.5);}
+.hm-months{display:flex;gap:3px;margin-bottom:3px;padding-left:24px;}
+.hm-month{font-size:8px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;}
+.hm-days{display:flex;flex-direction:column;gap:3px;margin-right:4px;}
+.hm-day{font-size:8px;color:var(--text2);height:11px;display:flex;align-items:center;}
+
+/* ============ CHARTS ============ */
+.chart-wrap{background:var(--bg3);border:1px solid rgba(57,255,20,0.08);border-radius:8px;padding:12px;margin-top:10px;}
+.chart-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;color:var(--text2);text-transform:uppercase;margin-bottom:10px;}
+.chart-empty{text-align:center;padding:24px;font-size:12px;color:var(--text2);}
+svg.chart{width:100%;overflow:visible;}
+
+/* ============ SCHEDULE PAGE ============ */
+.sched-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.sched-time{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--neon);min-width:60px;letter-spacing:.5px;flex-shrink:0;}
+.sched-task{font-size:13px;color:var(--text);line-height:1.3;}
+.sched-why{font-size:11px;color:var(--text2);margin-top:2px;}
+
+/* ============ TIMELINE ============ */
+.tlitem{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.tldot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.tlphase{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;}
+.tldesc{font-size:12px;color:var(--text2);line-height:1.55;margin-top:3px;}
+
+/* ============ HISTORY PAGE ============ */
+.hentry{
+  background:var(--bg2);border:1px solid rgba(57,255,20,0.08);
+  border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer;
+  transition:border-color .2s;
+}
+.hentry:hover{border-color:rgba(57,255,20,0.2);}
+.hentry-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.hentry-date{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--neon);letter-spacing:1px;}
+.hentry-score{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--gold);}
+.hentry-meta{font-size:11px;color:var(--text2);}
+.hentry-note{font-size:11px;color:var(--cyan);margin-top:4px;}
+
+/* ============ CHALLENGES PAGE ============ */
+.chal{
+  background:var(--bg2);border:1px solid rgba(57,255,20,0.1);
+  border-radius:10px;padding:16px;margin-bottom:10px;
+}
+.chal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.chal-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;letter-spacing:1px;}
+.chal-days{font-size:11px;color:var(--text2);}
+.chalbar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-bottom:10px;}
+.chalfill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--neon),var(--cyan));transition:width .5s;}
+
+/* ============ WEEKLY REVIEW ============ */
+.rev-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;}
+.revitem{background:var(--bg3);border:1px solid rgba(57,255,20,0.08);border-radius:8px;padding:12px;text-align:center;}
+.revval{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:var(--neon);}
+.revlbl{font-size:9px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+
+/* ============ STREAK BADGES ============ */
+.sbadge{
+  background:var(--bg3);border:1px solid rgba(57,255,20,0.1);
+  border-radius:6px;padding:6px 10px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;
+  color:var(--text2);display:inline-flex;align-items:center;gap:4px;
+  margin:3px;
+}
+.sbadge .n{color:var(--neon);font-weight:800;}
+
+/* ============ FREEZE ============ */
+.freeze-big{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:40px;color:var(--cyan);line-height:1;
+}
+
+/* ============ PHOTO REMIND ============ */
+#photo-banner{
+  display:none;
+  background:linear-gradient(135deg,rgba(255,46,245,0.07),rgba(0,229,255,0.07));
+  border:1px solid rgba(255,46,245,0.18);
+  border-radius:10px;padding:14px;margin-bottom:12px;text-align:center;
+}
+#photo-banner h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;color:var(--pink);margin:6px 0 3px;}
+#photo-banner p{font-size:11px;color:var(--text2);}
+
+/* ============ SUNDAY BANNER ============ */
+#sunday-banner{
+  display:none;
+  background:linear-gradient(135deg,rgba(255,201,51,0.07),rgba(255,46,245,0.07));
+  border:1px solid rgba(255,201,51,0.18);
+  border-radius:10px;padding:14px;margin-bottom:12px;text-align:center;
+}
+#sunday-banner h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;color:var(--gold);margin-bottom:3px;}
+
+/* ============ MODAL ============ */
+#modal{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;padding:20px;
+}
+#modal.on{display:flex;}
+.mbox{
+  background:var(--bg2);border:1px solid rgba(57,255,20,0.15);
+  border-radius:12px;padding:24px;max-width:340px;width:100%;text-align:center;
+}
+.mtitle{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;margin-bottom:8px;}
+.mbody{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px;}
+.mbtns{display:flex;gap:10px;justify-content:center;}
+
+/* ============ LEVEL UP OVERLAY ============ */
+#lvlup{
+  display:none;position:fixed;inset:0;z-index:600;
+  background:rgba(0,0,0,0.92);
+  align-items:center;justify-content:center;flex-direction:column;gap:14px;
+  cursor:pointer;
+}
+#lvlup.on{display:flex;animation:fadeUp .3s ease;}
+.lvl-orb{
+  width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,201,51,0.25),transparent);
+  border:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-size:44px;
+  animation:orbpulse 1s ease infinite alternate;
+}
+@keyframes orbpulse{
+  from{box-shadow:0 0 20px rgba(255,201,51,0.3);}
+  to{box-shadow:0 0 70px rgba(255,201,51,0.7);}
+}
+.lvl-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:34px;letter-spacing:5px;color:var(--gold);}
+.lvl-sub{font-size:14px;color:var(--text2);letter-spacing:2px;}
+
+/* ============ PROGRESS MINI BARS ============ */
+.minibar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-top:6px;}
+.minifill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--neon),var(--cyan));transition:width .4s;}
+
+/* ============ BOTTOM NAV ============ */
+#bnav{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(4,4,7,0.95);backdrop-filter:blur(24px);
+  border-top:1px solid rgba(57,255,20,0.08);
+  display:flex;padding:6px 0 calc(6px + env(safe-area-inset-bottom));
+}
+.bnavbtn{
+  flex:1;background:none;border:none;color:var(--text2);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:4px 0;transition:color .2s;
+}
+.bnavbtn.on{color:var(--neon);}
+.bnavicon{font-size:17px;}
+.bnavlbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;}
+
+/* ============ DAILY HEADER ============ */
+.day-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.day-date{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;color:var(--text2);}
+.day-done{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;color:var(--neon);}
+
+/* ============ REMINDER LIST ============ */
+.remitem{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.remtime{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--cyan);}
+.remtask{font-size:12px;color:var(--text2);}
+
+/* pop anim */
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
+.pop{animation:pop .22s ease;}
+
+/* card block */
+.card-block{background:var(--bg2);border:1px solid rgba(57,255,20,0.08);border-radius:10px;padding:14px;margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav id="nav">
+  <span class="nav-logo">⚡ APEX SELF</span>
+  <div class="nav-right">
+    <button class="npill on" onclick="nav('today')">Today</button>
+    <button class="npill" onclick="nav('progress')">Progress</button>
+    <button class="npill" onclick="nav('schedule')">Schedule</button>
+    <button class="npill" onclick="nav('history')">History</button>
+    <button class="npill" onclick="nav('challenges')">Challenges</button>
+  </div>
+</nav>
+
+<!-- ===== TODAY ===== -->
+<div class="page on" id="pg-today">
+  <div id="quote"></div>
+  <div id="sunday-banner"><h3>🏖 WEEKLY REVIEW DAY</h3><p>Sunday is rest & reflection. Check your Challenges tab for your weekly summary.</p></div>
+  <div id="photo-banner"><div style="font-size:26px">📸</div><h3>WEEKLY PHOTO CHECK-IN</h3><p>Take a progress photo now and save the date. The visual over 6 months is unreal.</p></div>
+
+  <!-- NOFAP HERO -->
+  <div id="nofap-hero">
+    <div class="nofap-row">
+      <div>
+        <div class="nofap-streak" id="nf-streak">0</div>
+        <div class="nofap-label">day streak</div>
+      </div>
+      <div class="nofap-actions">
+        <div class="nofap-best">🏆 Best: <span id="nf-best">0</span>d</div>
+        <div class="nofap-btns">
+          <button class="btn" id="btn-nfcheck" onclick="nofapCheck()">✓ MAINTAINED</button>
+          <button class="btn rd" onclick="nofapRelapse()">RELAPSE</button>
+        </div>
+      </div>
+    </div>
+    <div class="why" style="margin:0">
+      <div class="why-lbl">No-Fap</div>
+      Abstaining sharpens discipline and mental clarity. Testosterone spikes around day 7. What you resist in one area strengthens you in all areas.
+    </div>
+  </div>
+
+  <!-- LEVEL CARD -->
+  <div id="level-card">
+    <div class="lc-row">
+      <div>
+        <div style="font-size:9px;letter-spacing:2px;color:var(--text2);font-family:'Barlow Condensed',sans-serif;font-weight:600;text-transform:uppercase;margin-bottom:2px">RANK</div>
+        <div class="lc-rank" id="lc-rank">CIVILIAN</div>
+      </div>
+      <div style="text-align:right">
+        <div class="lc-xp" id="lc-xp">0 / 100 XP</div>
+        <div class="lc-today" id="lc-today">+0 XP today</div>
+      </div>
+    </div>
+    <div class="xpbar"><div class="xpfill" id="xpfill" style="width:0%"></div></div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stat4">
+    <div class="scard"><div class="slabel">No-Fap</div><div class="sval" id="sv-nf">0</div><div class="ssub">day streak</div></div>
+    <div class="scard c"><div class="slabel">Water</div><div class="sval" id="sv-water">0</div><div class="ssub">of 80 oz</div></div>
+    <div class="scard g"><div class="slabel">Gym Streak</div><div class="sval" id="sv-gym">0</div><div class="ssub">consecutive days</div></div>
+    <div class="scard p"><div class="slabel">Disc Score</div><div class="sval" id="sv-disc">0</div><div class="ssub">/ 100</div></div>
+  </div>
+
+  <!-- DISCIPLINE METER -->
+  <div id="disc">
+    <div class="disc-row">
+      <div class="disc-lbl">🔥 7-Day Discipline Score</div>
+      <div class="disc-num" id="disc-num">0</div>
+    </div>
+    <div class="discbar"><div class="discfill" id="discfill" style="width:0%"></div></div>
+    <div class="disc-tier" id="disc-tier">BUILD THE FOUNDATION</div>
+  </div>
+
+  <!-- DAY HEADER -->
+  <div class="day-hdr">
+    <div class="day-date" id="day-date">—</div>
+    <div class="day-done" id="day-done">0/0 done</div>
+  </div>
+
+  <!-- ---- PHYSICAL ---- -->
+  <div class="stitle">💪 Physical</div>
+
+  <!-- GYM -->
+  <div class="tc" id="tc-gym">
+    <div class="tch" onclick="expand('gym')">
+      <div class="tcicon">🏋️</div>
+      <div class="tci">
+        <div class="tcname">Gym Attendance</div>
+        <div class="tcsub" id="sub-gym">Mon–Sat | Streak: <span id="gym-streak-lbl">0</span>d</div>
+      </div>
+      <button class="tccheck" id="ck-gym" onclick="e(event);check('gym')"></button>
+      <div class="tcarrow" id="ar-gym">▼</div>
+    </div>
+    <div class="tcbody" id="bd-gym">
+      <div class="why"><div class="why-lbl">Why This Matters</div>Progressive overload is the mechanism — add weight or reps every week. Compound lifts (squat, deadlift, bench, OHP) are the biggest natural testosterone drivers. Your anabolic response is at its biological peak right now.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+        <div class="sbadge">🔥 Streak <span class="n" id="gym-streak-val">0</span>d</div>
+        <div class="sbadge">🏆 Best <span class="n" id="gym-best-val">0</span>d</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARDIO -->
+  <div class="tc" id="tc-cardio">
+    <div class="tch" onclick="expand('cardio')">
+      <div class="tcicon">🏃</div>
+      <div class="tci">
+        <div class="tcname">Cardio Log</div>
+        <div class="tcsub" id="sub-cardio">Walk or run daily</div>
+      </div>
+      <button class="tccheck" id="ck-cardio" onclick="e(event);check('cardio')"></button>
+      <div class="tcarrow" id="ar-cardio">▼</div>
+    </div>
+    <div class="tcbody" id="bd-cardio">
+      <div class="why"><div class="why-lbl">Why This Matters</div>Walk 2 min, run 1 min intervals. Shift the ratio weekly. Within 6–8 weeks you run 30 min straight. Pace doesn't matter — time on feet is everything.</div>
+      <div class="irow" style="margin-top:8px">
+        <div class="icol">
+          <label class="ilabel">Type</label>
+          <select id="cardio-type" onchange="saveCardio()"><option value="walk">Walk</option><option value="run">Run</option><option value="both">Walk+Run</option></select>
+        </div>
+        <div class="icol">
+          <label class="ilabel">Minutes</label>
+          <input type="number" id="cardio-min" placeholder="30" min="0" oninput="saveCardio()">
+        </div>
+        <div class="icol">
+          <label class="ilabel">Miles</label>
+          <input type="number" id="cardio-mi" placeholder="2.0" step="0.1" min="0" oninput="saveCardio()">
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:10px;color:var(--text2)">RUNNING GOAL</span>
+          <span style="font-size:10px;color:var(--neon)" id="cardio-goal-lbl">0%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <input type="number" id="cardio-goal-mi" placeholder="5" step="0.5" min="0.5" style="width:70px;font-size:12px;padding:5px 8px" oninput="saveCardio()">
+          <span style="font-size:11px;color:var(--text2)">mile goal</span>
+        </div>
+        <div class="minibar"><div class="minifill" id="cardio-goalbar" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLD SHOWER -->
+  <div class="tc" id="tc-cold">
+    <div class="tch" onclick="expand('cold')">
+      <div class="tcicon">🧊</div>
+      <div class="tci"><div class="tcname">Cold Shower</div><div class="tcsub" id="sub-cold">Build mental toughness</div></div>
+      <button class="tccheck" id="ck-cold" onclick="e(event);check('cold')"></button>
+      <div class="tcarrow" id="ar-cold">▼</div>
+    </div>
+    <div class="tcbody" id="bd-cold">
+      <div class="why"><div class="why-lbl">Why This Matters</div>Cold exposure raises dopamine significantly, builds mental toughness, and sharpens the discipline that carries into every other habit. Doing something hard first thing sets the tone for the entire day.</div>
+    </div>
+  </div>
+
+  <!-- TAN -->
+  <div class="tc" id="tc-tan">
+    <div class="tch" onclick="expand('tan')">
+      <div class="tcicon">☀️</div>
+      <div class="tci"><div class="tcname">Sun Exposure / Tan</div><div class="tcsub" id="sub-tan">20–30 min, 10am–2pm</div></div>
+      <button class="tccheck" id="ck-tan" onclick="e(event);check('tan')"></button>
+      <div class="tcarrow" id="ar-tan">▼</div>
+    </div>
+    <div class="tcbody" id="bd-tan">
+      <div class="why"><div class="why-lbl">Why This Matters</div>20–30 min direct sun between 10am–2pm spikes vitamin D, which directly elevates testosterone. Expose arms, face, chest. UVB rays require short unprotected exposure for synthesis.</div>
+    </div>
+  </div>
+
+  <!-- STRETCH -->
+  <div class="tc" id="tc-stretch">
+    <div class="tch" onclick="expand('stretch')">
+      <div class="tcicon">🧘</div>
+      <div class="tci"><div class="tcname">Stretching / Mobility</div><div class="tcsub" id="sub-stretch">5 min minimum</div></div>
+      <button class="tccheck" id="ck-stretch" onclick="e(event);check('stretch')"></button>
+      <div class="tcarrow" id="ar-stretch">▼</div>
+    </div>
+    <div class="tcbody" id="bd-stretch">
+      <div class="why"><div class="why-lbl">Why This Matters</div>Five minutes daily compounds into dramatically better performance and injury prevention over a year. Most people skip this and plateau or break down. Don't be most people.</div>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="tc" id="tc-steps">
+    <div class="tch" onclick="expand('steps')">
+      <div class="tcicon">👟</div>
+      <div class="tci"><div class="tcname">Daily Steps</div><div class="tcsub" id="sub-steps">Goal: 8,000–10,000</div></div>
+      <button class="tccheck" id="ck-steps" onclick="e(event);check('steps')"></button>
+      <div class="tcarrow" id="ar-steps">▼</div>
+    </div>
+    <div class="tcbody" id="bd-steps">
+      <div class="why"><div class="why-lbl">Why This Matters</div>On rest days this keeps you active without overtraining. Ties into overall calorie burn and cardiovascular baseline health.</div>
+      <label class="ilabel" style="margin-top:10px">Steps today</label>
+      <input type="number" id="steps-val" placeholder="8000" min="0" oninput="saveSteps()">
+      <div class="minibar" style="margin-top:6px"><div class="minifill" id="steps-bar" style="width:0%"></div></div>
+      <div style="font-size:10px;color:var(--text2);margin-top:3px" id="steps-pct">0% of 10,000</div>
+    </div>
+  </div>
+
+  <!-- ---- WATER ---- -->
+  <div class="stitle">💧 Hydration</div>
+  <div class="tc" id="tc-water">
+    <div class="tch" onclick="expand('water')">
+      <div class="tcicon">💧</div>
+      <div class="tci"><div class="tcname">Water Intake</div><div class="tcsub" id="sub-water">0 / 80 oz</div></div>
+      <div class="tcarrow" id="ar-water">▼</div>
+    </div>
+    <div class="tcbody" id="bd-water">
+      <div class="why"><div class="why-lbl">Why This Matters</div>Drink at least half your bodyweight in oz daily. Add more on gym/cardio days. Even mild dehydration tanks workout performance, focus, and mood.</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:10px">
+        <div>
+          <div class="water-num" id="water-num">0</div>
+          <div style="font-size:10px;color:var(--text2)">oz / 80 oz goal</div>
+        </div>
+        <div style="flex:1">
+          <div class="waterbar"><div class="waterfill" id="waterfill" style="width:0%"></div></div>
+          <div style="font-size:10px;color:var(--cyan);margin-top:3px" id="water-pct">0%</div>
+        </div>
+      </div>
+      <div class="wbtns">
+        <div class="wbtn" onclick="addWater(8)">+8oz</div>
+        <div class="wbtn" onclick="addWater(16)">+16oz</div>
+        <div class="wbtn" onclick="addWater(32)">+32oz</div>
+        <div class="wbtn" onclick="addWater(-8)" style="color:var(--text2);border-color:rgba(255,255,255,0.08)">-8oz</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---- SLEEP ---- -->
+  <div class="stitle">😴 Sleep</div>
+  <div class="tc" id="tc-sleep">
+    <div class="tch" onclick="expand('sleep')">
+      <div class="tcicon">😴</div>
+      <div class="tci"><div class="tcname">Sleep Tracker</div><div class="tcsub" id="sub-sleep">Log last night</div></div>
+      <button class="tccheck" id="ck-sleep" onclick="e(event);check('sleep')"></button>
+      <div class="tcarrow" id="ar-sleep">▼</div>
+    </div>
+    <div class="tcbody" id="bd-sleep">
+      <div class="why"><div class="why-lbl">Why This Matters</div>Your body produces the most testosterone and HGH between 10pm–2am in deep sleep. Getting to bed by 10:30pm is a performance decision. Wake at the same time every day — it's the #1 fix for your schedule.</div>
+      <div class="irow" style="margin-top:8px">
+        <div class="icol"><label class="ilabel">Bedtime</label><input type="time" id="sleep-bed" value="22:30" onchange="calcSleep()"></div>
+        <div class="icol"><label class="ilabel">Wake Time</label><input type="time" id="sleep-wake" value="06:30" onchange="calcSleep()"></div>
+      </div>
+      <div id="sleep-result" style="margin-top:8px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;"></div>
+    </div>
+  </div>
+
+  <!-- ---- NUTRITION ---- -->
+  <div class="stitle">🥗 Nutrition</div>
+
+  <div class="tc" id="tc-nutrition">
+    <div class="tch" onclick="expand('nutrition')">
+      <div class="tcicon">🍗</div>
+      <div class="tci"><div class="tcname">Nutrition Snapshot</div><div class="tcsub" id="sub-nutrition">Quick 4-check honest log</div></div>
+      <button class="tccheck" id="ck-nutrition" onclick="e(event);check('nutrition')"></button>
+      <div class="tcarrow" id="ar-nutrition">▼</div>
+    </div>
+    <div class="tcbody" id="bd-nutrition">
+      <div class="why"><div class="why-lbl">Why This Matters</div>Hit 0.8–1g protein per lb of bodyweight. Lean bulk at 200–300 cal surplus. Abs come from building muscle AND low body fat — diet is 70% of that equation.</div>
+      <div class="suppgrid">
+        <div class="suppitem" id="si-prot" onclick="togSupp('si-prot','nutr_protein')"><div class="suppck"></div><div><div class="suppname">Hit Protein</div><div class="suppdesc">0.8–1g/lb goal</div></div></div>
+        <div class="suppitem" id="si-clean" onclick="togSupp('si-clean','nutr_clean')"><div class="suppck"></div><div><div class="suppname">Ate Clean</div><div class="suppdesc">Whole foods</div></div></div>
+        <div class="suppitem" id="si-nojunk" onclick="togSupp('si-nojunk','nutr_nojunk')"><div class="suppck"></div><div><div class="suppname">No Junk</div><div class="suppdesc">Avoided processed</div></div></div>
+        <div class="suppitem" id="si-noalc" onclick="togSupp('si-noalc','nutr_noalc')"><div class="suppck"></div><div><div class="suppname">No Alcohol</div><div class="suppdesc">Kills testosterone</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tc" id="tc-supps">
+    <div class="tch" onclick="expand('supps')">
+      <div class="tcicon">💊</div>
+      <div class="tci"><div class="tcname">Supplements</div><div class="tcsub" id="sub-supps">Daily stack</div></div>
+      <button class="tccheck" id="ck-supps" onclick="e(event);check('supps')"></button>
+      <div class="tcarrow" id="ar-supps">▼</div>
+    </div>
+    <div class="tcbody" id="bd-supps">
+      <div class="why"><div class="why-lbl">Why This Matters</div>Creatine alone at your age is one of the best decisions you can make. Zinc + Vitamin D are the two most direct natural testosterone boosters. Magnesium deepens sleep quality significantly.</div>
+      <div class="suppgrid">
+        <div class="suppitem" id="si-vitd" onclick="togSupp('si-vitd','supp_vitd')"><div class="suppck"></div><div><div class="suppname">Vitamin D3</div><div class="suppdesc">Direct test booster</div></div></div>
+        <div class="suppitem" id="si-zinc" onclick="togSupp('si-zinc','supp_zinc')"><div class="suppck"></div><div><div class="suppname">Zinc</div><div class="suppdesc">#1 test mineral</div></div></div>
+        <div class="suppitem" id="si-creat" onclick="togSupp('si-creat','supp_creat')"><div class="suppck"></div><div><div class="suppname">Creatine</div><div class="suppdesc">Strength + cognition</div></div></div>
+        <div class="suppitem" id="si-mag" onclick="togSupp('si-mag','supp_mag')"><div class="suppck"></div><div><div class="suppname">Magnesium</div><div class="suppdesc">Deeper sleep</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---- MENTAL ---- -->
+  <div class="stitle">🧠 Mental</div>
+
+  <div class="tc" id="tc-mood">
+    <div class="tch" onclick="expand('mood')">
+      <div class="tcicon">📊</div>
+      <div class="tci"><div class="tcname">Mood · Energy · Sharpness</div><div class="tcsub" id="sub-mood">Rate today's mental state</div></div>
+      <button class="tccheck" id="ck-mood" onclick="e(event);check('mood')"></button>
+      <div class="tcarrow" id="ar-mood">▼</div>
+    </div>
+    <div class="tcbody" id="bd-mood">
+      <div class="why"><div class="why-lbl">Why This Matters</div>Over time the correlation between habits and how you feel becomes undeniable. Miss gym for 3 days, watch these scores drop. The data makes the feedback loop real.</div>
+      <label class="ilabel" style="margin-top:10px">Mood</label>
+      <input type="range" id="sl-mood" min="1" max="5" value="3" oninput="sl('mood')">
+      <div class="slider-row"><span>💀 Low</span><span>😐 Okay</span><span>🔥 Elite</span></div>
+      <div class="slider-val" id="sv-sl-mood">3</div>
+
+      <label class="ilabel" style="margin-top:12px">Energy</label>
+      <input type="range" id="sl-energy" min="1" max="5" value="3" oninput="sl('energy')">
+      <div class="slider-row"><span>Dead</span><span>Okay</span><span>Locked In</span></div>
+      <div class="slider-val" id="sv-sl-energy">3</div>
+
+      <label class="ilabel" style="margin-top:12px">Mental Sharpness</label>
+      <input type="range" id="sl-sharp" min="1" max="5" value="3" oninput="sl('sharp')">
+      <div class="slider-row"><span>Foggy</span><span>Normal</span><span>Laser</span></div>
+      <div class="slider-val" id="sv-sl-sharp">3</div>
+
+      <label class="ilabel" style="margin-top:12px">Focus vs Wasted Time</label>
+      <input type="range" id="sl-focus" min="1" max="5" value="3" oninput="sl('focus')">
+      <div class="slider-row"><span>Wasted</span><span>Mixed</span><span>Locked In</span></div>
+      <div class="slider-val" id="sv-sl-focus">3</div>
+    </div>
+  </div>
+
+  <div class="tc" id="tc-gratitude">
+    <div class="tch" onclick="expand('gratitude')">
+      <div class="tcicon">🙏</div>
+      <div class="tci"><div class="tcname">Gratitude</div><div class="tcsub" id="sub-gratitude">One thing you're grateful for</div></div>
+      <button class="tccheck" id="ck-gratitude" onclick="e(event);check('gratitude')"></button>
+      <div class="tcarrow" id="ar-gratitude">▼</div>
+    </div>
+    <div class="tcbody" id="bd-gratitude">
+      <div class="why"><div class="why-lbl">Why This Matters</div>Daily gratitude measurably reduces cortisol — the stress hormone that directly suppresses testosterone. Keep cortisol low, testosterone stays high. This isn't soft. This is biochemistry.</div>
+      <textarea id="txt-gratitude" placeholder="I'm grateful for..." oninput="saveTxt('gratitude')"></textarea>
+    </div>
+  </div>
+
+  <div class="tc" id="tc-intention">
+    <div class="tch" onclick="expand('intention')">
+      <div class="tcicon">📝</div>
+      <div class="tci"><div class="tcname">Intention & Reflection</div><div class="tcsub" id="sub-intention">Set goal · Log win</div></div>
+      <button class="tccheck" id="ck-intention" onclick="e(event);check('intention')"></button>
+      <div class="tcarrow" id="ar-intention">▼</div>
+    </div>
+    <div class="tcbody" id="bd-intention">
+      <div class="why"><div class="why-lbl">Why This Matters</div>Writing one goal locks your mind in for the day. Writing one win at night builds a journal of growth. Read it in 6 months.</div>
+      <label class="ilabel" style="margin-top:10px">Today's Goal</label>
+      <textarea id="txt-goal" placeholder="My #1 focus today is..." oninput="saveTxt('goal')"></textarea>
+      <label class="ilabel" style="margin-top:8px">Tonight's Win</label>
+      <textarea id="txt-win" placeholder="What I accomplished today..." oninput="saveTxt('win')"></textarea>
+    </div>
+  </div>
+
+  <!-- STREAK FREEZE -->
+  <div class="stitle">🛡️ Streak Freeze</div>
+  <div class="card-block">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+      <div class="freeze-big" id="freeze-num">1</div>
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--text)">freeze available</div>
+        <div style="font-size:11px;color:var(--text2)">Resets every Monday · Use wisely</div>
+      </div>
+    </div>
+    <button class="btn cy" onclick="useFreeze()">❄️ USE FREEZE</button>
+  </div>
+
+</div><!-- /today -->
+
+<!-- ===== PROGRESS ===== -->
+<div class="page" id="pg-progress">
+
+  <div class="stitle">🏆 Personal Records</div>
+  <div class="pr-board">
+    <div class="pritem"><div class="prlift">Bench Press</div><div class="prval" id="pr-bench">—</div><div class="prunit">lbs</div><div class="prinput"><input type="number" id="pri-bench" placeholder="Enter PR" oninput="savePR('bench')"></div></div>
+    <div class="pritem"><div class="prlift">Squat</div><div class="prval" id="pr-squat">—</div><div class="prunit">lbs</div><div class="prinput"><input type="number" id="pri-squat" placeholder="Enter PR" oninput="savePR('squat')"></div></div>
+    <div class="pritem"><div class="prlift">Deadlift</div><div class="prval" id="pr-dead">—</div><div class="prunit">lbs</div><div class="prinput"><input type="number" id="pri-dead" placeholder="Enter PR" oninput="savePR('dead')"></div></div>
+    <div class="pritem"><div class="prlift">Overhead Press</div><div class="prval" id="pr-ohp">—</div><div class="prunit">lbs</div><div class="prinput"><input type="number" id="pri-ohp" placeholder="Enter PR" oninput="savePR('ohp')"></div></div>
+  </div>
+
+  <div class="stitle">📐 Body Measurements</div>
+  <div class="card-block">
+    <div class="irow">
+      <div class="icol"><label class="ilabel">Weight (lbs)</label><input type="number" id="bw" placeholder="165"></div>
+      <div class="icol"><label class="ilabel">Chest (in)</label><input type="number" id="bc" placeholder="38"></div>
+      <div class="icol"><label class="ilabel">Waist (in)</label><input type="number" id="bwai" placeholder="32"></div>
+      <div class="icol"><label class="ilabel">Arms (in)</label><input type="number" id="ba" placeholder="14"></div>
+    </div>
+    <button class="btn" style="margin-top:10px" onclick="logBody()">LOG THIS WEEK</button>
+    <div class="why" style="margin-top:10px"><div class="why-lbl">Why This Matters</div>The V-taper comes from building shoulder/back width while keeping waist lean. Weekly numbers tell the real story over months.</div>
+    <div class="chart-wrap" id="body-chart"><div class="chart-empty">📈 Log measurements weekly to see your weight chart</div></div>
+  </div>
+
+  <div class="stitle">📅 90-Day Consistency Heatmap</div>
+  <div class="card-block">
+    <div style="font-size:10px;color:var(--text2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+      <span>PAST 90 DAYS · EACH CELL = 1 DAY</span>
+      <span style="display:flex;gap:4px;align-items:center">
+        <span class="hm-cell" style="display:inline-block;background:var(--bg3)"></span>
+        <span class="hm-cell" style="display:inline-block" data-s="2"></span>
+        <span class="hm-cell" style="display:inline-block" data-s="4"></span>
+        <span class="hm-cell" style="display:inline-block;background:var(--neon);box-shadow:0 0 4px rgba(57,255,20,0.5)"></span>
+        <span style="font-size:9px;color:var(--text2)">less → more</span>
+      </span>
+    </div>
+    <div id="hm-months" class="hm-months"></div>
+    <div style="display:flex;gap:4px">
+      <div id="hm-days" class="hm-days"></div>
+      <div id="heatmap-wrap"><div id="heatmap"></div></div>
+    </div>
+  </div>
+
+  <div class="stitle">📈 Mood & Energy Trend</div>
+  <div class="card-block">
+    <div class="chart-wrap" id="mood-chart"><div class="chart-empty">📊 Log mood daily to see your 14-day trend</div></div>
+  </div>
+
+  <div class="stitle">🔮 What to Expect</div>
+  <div class="card-block">
+    <div class="tlitem"><div class="tldot" style="background:var(--neon);box-shadow:0 0 8px rgba(57,255,20,0.4)"></div><div><div class="tlphase" style="color:var(--neon)">DAY 1–7</div><div class="tldesc">Energy improving, gym soreness sets in, sleep starts regulating. Testosterone spike around day 7 of abstinence.</div></div></div>
+    <div class="tlitem"><div class="tldot" style="background:var(--cyan);box-shadow:0 0 8px rgba(0,229,255,0.4)"></div><div><div class="tlphase" style="color:var(--cyan)">DAY 10</div><div class="tldesc">Noticeable mood lift. Cardio gets easier. Mental clarity noticeably sharper.</div></div></div>
+    <div class="tlitem"><div class="tldot" style="background:var(--gold);box-shadow:0 0 8px rgba(255,201,51,0.4)"></div><div><div class="tlphase" style="color:var(--gold)">MONTH 1</div><div class="tldesc">Visible muscle tone emerging. Running stamina building fast. Sleep fully regulated. Discipline habits solidifying.</div></div></div>
+    <div class="tlitem"><div class="tldot" style="background:var(--pink);box-shadow:0 0 8px rgba(255,46,245,0.4)"></div><div><div class="tlphase" style="color:var(--pink)">MONTH 3</div><div class="tldesc">V-taper visible. Abs showing if diet is clean. Running 20–30 min straight. Confidence and drive elevated significantly.</div></div></div>
+    <div class="tlitem"><div class="tldot" style="background:var(--gold)"></div><div><div class="tlphase" style="color:var(--gold)">6 MONTHS</div><div class="tldesc">Physique noticeably transformed. PRs climbing steadily. Habits fully automatic. Mental baseline permanently elevated.</div></div></div>
+    <div class="tlitem" style="border:none"><div class="tldot" style="background:var(--neon);width:13px;height:13px;margin-top:2px"></div><div><div class="tlphase" style="color:var(--neon);font-size:16px">1 YEAR</div><div class="tldesc">Elite consistency. Transformed physique. Naturally optimized testosterone. Sharp mind. High discipline. <strong style="color:var(--neon)">Genuinely a different person.</strong></div></div></div>
+  </div>
+
+</div><!-- /progress -->
+
+<!-- ===== SCHEDULE ===== -->
+<div class="page" id="pg-schedule">
+  <div class="stitle">⏰ Daily Schedule</div>
+  <div class="card-block">
+    <div class="sched-item"><div class="sched-time">6:30 AM</div><div><div class="sched-task">Wake Up</div><div class="sched-why">Consistent wake time is the #1 fix for your sleep schedule</div></div></div>
+    <div class="sched-item"><div class="sched-time">7:00 AM</div><div><div class="sched-task">Morning Walk / Run</div><div class="sched-why">Fasted cardio burns fat, builds stamina, sets mental tone for the day</div></div></div>
+    <div class="sched-item"><div class="sched-time">8:00 AM</div><div><div class="sched-task">Breakfast + Supplements</div><div class="sched-why">High-protein meal. Muscle repair and hormone optimization begin here</div></div></div>
+    <div class="sched-item"><div class="sched-time">12:00 PM</div><div><div class="sched-task">Gym (Mon–Sat)</div><div class="sched-why">Compound lifts, progressive overload, maximum testosterone response</div></div></div>
+    <div class="sched-item"><div class="sched-time">2:00 PM</div><div><div class="sched-task">Lunch + Sun Exposure</div><div class="sched-why">Peak vitamin D window — 20–30 min direct sun. Direct testosterone boost</div></div></div>
+    <div class="sched-item"><div class="sched-time">6:00 PM</div><div><div class="sched-task">Dinner</div><div class="sched-why">High protein. Eat early enough to digest before sleep</div></div></div>
+    <div class="sched-item"><div class="sched-time">9:30 PM</div><div><div class="sched-task">Wind Down — No Screens</div><div class="sched-why">Blue light suppresses melatonin and delays deep sleep onset</div></div></div>
+    <div class="sched-item" style="border:none"><div class="sched-time">10:30 PM</div><div><div class="sched-task">Sleep</div><div class="sched-why">HGH and testosterone production peaks in your first deep sleep cycles</div></div></div>
+  </div>
+
+  <div class="stitle">🔔 Phone Reminders to Set</div>
+  <div class="card-block">
+    <div class="remitem"><div><div class="remtime">6:30 AM</div><div class="remtask">WAKE UP — Don't snooze</div></div><span style="font-size:18px">⏰</span></div>
+    <div class="remitem"><div><div class="remtime">7:00 AM</div><div class="remtask">CARDIO — Lace up and go</div></div><span style="font-size:18px">🏃</span></div>
+    <div class="remitem"><div><div class="remtime">11:30 AM</div><div class="remtask">WATER CHECK — Halfway to 80oz?</div></div><span style="font-size:18px">💧</span></div>
+    <div class="remitem"><div><div class="remtime">12:00 PM</div><div class="remtask">GYM TIME — Get in there</div></div><span style="font-size:18px">🏋️</span></div>
+    <div class="remitem"><div><div class="remtime">2:00 PM</div><div class="remtask">SUN — Get outside 20 min</div></div><span style="font-size:18px">☀️</span></div>
+    <div class="remitem"><div><div class="remtime">9:30 PM</div><div class="remtask">WIND DOWN — Phone away</div></div><span style="font-size:18px">📵</span></div>
+    <div class="remitem" style="border:none"><div><div class="remtime">10:30 PM</div><div class="remtask">SLEEP — Lights out, room cold</div></div><span style="font-size:18px">😴</span></div>
+  </div>
+</div><!-- /schedule -->
+
+<!-- ===== HISTORY ===== -->
+<div class="page" id="pg-history">
+  <div class="stitle">📋 Daily Log History</div>
+  <div id="history-list"><div style="text-align:center;padding:40px;font-size:13px;color:var(--text2)">No history yet. Complete your first day to start building your record.</div></div>
+</div>
+
+<!-- ===== CHALLENGES ===== -->
+<div class="page" id="pg-challenges">
+
+  <div class="stitle">⚔️ Active Challenges</div>
+
+  <div class="chal">
+    <div class="chal-hdr">
+      <div class="chal-name" style="color:var(--neon)">30-DAY LOCK IN</div>
+      <div class="chal-days" id="ch30-status">Not started</div>
+    </div>
+    <div class="chalbar"><div class="chalfill" id="ch30-fill" style="width:0%"></div></div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Complete all habits every day for 30 days. No exceptions.</div>
+    <button class="btn" id="btn-ch30" onclick="startChallenge(30)">START CHALLENGE</button>
+  </div>
+
+  <div class="chal">
+    <div class="chal-hdr">
+      <div class="chal-name" style="color:var(--gold)">90-DAY TRANSFORMATION</div>
+      <div class="chal-days" id="ch90-status">Not started</div>
+    </div>
+    <div class="chalbar"><div class="chalfill" id="ch90-fill" style="width:0%"></div></div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Three months of elite consistency. This is where the physique transforms.</div>
+    <button class="btn gd" id="btn-ch90" onclick="startChallenge(90)">START CHALLENGE</button>
+  </div>
+
+  <div class="stitle">📊 Weekly Review</div>
+  <div class="card-block" id="weekly-review">
+    <div style="text-align:center;padding:20px;font-size:12px;color:var(--text2)">Complete a full week of tracking to see your weekly review.</div>
+  </div>
+
+  <div class="stitle">🔥 All Streaks</div>
+  <div class="card-block" id="all-streaks">
+    <div style="font-size:12px;color:var(--text2)">Start logging to build streaks.</div>
+  </div>
+
+</div><!-- /challenges -->
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="mbox">
+    <div class="mtitle" id="m-title">CONFIRM</div>
+    <div class="mbody" id="m-body">Are you sure?</div>
+    <div class="mbtns">
+      <button class="btn gh" onclick="closeModal()">CANCEL</button>
+      <button class="btn rd" id="m-confirm" onclick="doModal()">CONFIRM</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEVEL UP -->
+<div id="lvlup" onclick="closeLvlUp()">
+  <div class="lvl-orb">⚡</div>
+  <div class="lvl-title">LEVEL UP!</div>
+  <div class="lvl-sub" id="lvl-sub">You are now a RECRUIT</div>
+  <div style="font-size:11px;color:var(--text2);margin-top:6px">tap to continue</div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div id="bnav">
+  <button class="bnavbtn on" onclick="nav('today')" id="bn-today"><div class="bnavicon">⚡</div><div class="bnavlbl">Today</div></button>
+  <button class="bnavbtn" onclick="nav('progress')" id="bn-progress"><div class="bnavicon">📈</div><div class="bnavlbl">Progress</div></button>
+  <button class="bnavbtn" onclick="nav('schedule')" id="bn-schedule"><div class="bnavicon">🕐</div><div class="bnavlbl">Schedule</div></button>
+  <button class="bnavbtn" onclick="nav('history')" id="bn-history"><div class="bnavicon">📋</div><div class="bnavlbl">History</div></button>
+  <button class="bnavbtn" onclick="nav('challenges')" id="bn-challenges"><div class="bnavicon">⚔️</div><div class="bnavlbl">Challenges</div></button>
+</div>
+
+<script>
+// ================================================================
+// CONSTANTS
+// ================================================================
+const QUOTES = [
+  "Suffer the pain of discipline or suffer the pain of regret.",
+  "The version of you a year from now is watching you make this choice.",
+  "Every rep, every meal, every cold shower — it's all compounding.",
+  "You don't rise to your goals. You fall to your systems.",
+  "The grind is just the price of greatness.",
+  "Champions aren't born. They're built, rep by rep.",
+  "Consistency is more important than intensity.",
+  "Hard work beats talent when talent doesn't work hard.",
+  "The body achieves what the mind believes.",
+  "If it doesn't challenge you, it doesn't change you.",
+  "Your future self is built by your daily habits.",
+  "Discipline is choosing what you want most over what you want now.",
+  "Do it today. Your future self will thank you.",
+  "The only bad workout is the one that didn't happen.",
+  "Don't count the days. Make the days count."
+];
+
+const LEVELS = [
+  {name:'CIVILIAN',   min:0},
+  {name:'RECRUIT',    min:100},
+  {name:'ATHLETE',    min:300},
+  {name:'WARRIOR',    min:700},
+  {name:'ELITE',      min:1500},
+  {name:'APEX',       min:3000}
+];
+
+// All checkable habit IDs
+const HABITS = ['gym','cardio','cold','tan','stretch','steps','sleep','nutrition','supps','mood','gratitude','intention'];
+const XP_EACH = 8;
+const WATER_GOAL = 80;
+const STEPS_GOAL = 10000;
+
+// ================================================================
+// STATE MANAGEMENT
+// ================================================================
+function todayKey() {
+  return new Date().toISOString().slice(0,10);
+}
+
+function dateKey(d) {
+  return new Date(d).toISOString().slice(0,10);
+}
+
+function getGlobal() {
+  try { return JSON.parse(localStorage.getItem('apx_global') || 'null') || defaultGlobal(); }
+  catch(e) { return defaultGlobal(); }
+}
+
+function defaultGlobal() {
+  return {
+    totalXP: 0,
+    // No-fap
+    nfStreak: 0,
+    nfBest: 0,
+    nfLastCheck: null,
+    // Gym streak (tracked separately with proper logic)
+    gymStreak: 0,
+    gymBest: 0,
+    gymLastDay: null,  // last date gym was checked
+    // Freeze
+    freezeWeek: null,
+    freezeAvail: 1,
+    // PRs
+    prs: {bench:'',squat:'',dead:'',ohp:''},
+    // Body log
+    bodyLog: [],
+    // Challenges
+    challenges: {}
+  };
+}
+
+function saveGlobal(g) { localStorage.setItem('apx_global', JSON.stringify(g)); }
+
+function getDayData(key) {
+  try { return JSON.parse(localStorage.getItem('apx_day_'+key) || 'null') || defaultDay(); }
+  catch(e) { return defaultDay(); }
+}
+
+function defaultDay() {
+  return {
+    checks: {},         // habit id -> bool
+    water: 0,
+    cardioType:'walk', cardioMin:'', cardioMi:'', cardioGoalMi:'5',
+    sleepBed:'22:30', sleepWake:'06:30',
+    steps:'',
+    suppVitd:false, suppZinc:false, suppCreat:false, suppMag:false,
+    nutrProtein:false, nutrClean:false, nutrNojunk:false, nutrNoalc:false,
+    mood:3, energy:3, sharp:3, focus:3,
+    gratitude:'', goal:'', win:'',
+    xp: 0
+  };
+}
+
+function saveDay(key, data) { localStorage.setItem('apx_day_'+key, JSON.stringify(data)); }
+
+let G = getGlobal();
+let TODAY = todayKey();
+let D = getDayData(TODAY);
+let modalCb = null;
+
+// ================================================================
+// INIT
+// ================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  initQuote();
+  initDateDisplay();
+  loadAll();
+  renderAll();
+  buildHeatmap();
+  buildHistory();
+  buildStreaks();
+  checkSundayBanner();
+  checkPhotoReminder();
+  checkFreezeReset();
+});
+
+function initQuote() {
+  const idx = Math.floor(Math.random() * QUOTES.length);
+  document.getElementById('quote').textContent = `"${QUOTES[idx]}"`;
+}
+
+function initDateDisplay() {
+  const d = new Date();
+  const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('day-date').textContent =
+    `${DAYS[d.getDay()]} · ${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`.toUpperCase();
+}
+
+function checkSundayBanner() {
+  if (new Date().getDay() === 0) document.getElementById('sunday-banner').style.display='block';
+}
+
+function checkPhotoReminder() {
+  const last = parseInt(localStorage.getItem('apx_photo') || '0');
+  const now = Date.now();
+  if (now - last > 7 * 86400000) {
+    document.getElementById('photo-banner').style.display = 'block';
+    localStorage.setItem('apx_photo', now);
+  }
+}
+
+// ================================================================
+// LOAD STATE INTO UI
+// ================================================================
+function loadAll() {
+  G = getGlobal();
+  D = getDayData(TODAY);
+
+  // Checks
+  HABITS.forEach(h => setCheckUI(h, !!D.checks[h]));
+
+  // Water
+  renderWater();
+
+  // Sliders
+  ['mood','energy','sharp','focus'].forEach(s => {
+    const el = document.getElementById('sl-'+s);
+    if (el) { el.value = D[s] || 3; document.getElementById('sv-sl-'+s).textContent = D[s] || 3; }
+  });
+
+  // Text areas
+  if (D.gratitude) document.getElementById('txt-gratitude').value = D.gratitude;
+  if (D.goal) document.getElementById('txt-goal').value = D.goal;
+  if (D.win) document.getElementById('txt-win').value = D.win;
+
+  // Cardio
+  if (D.cardioType) document.getElementById('cardio-type').value = D.cardioType;
+  if (D.cardioMin) document.getElementById('cardio-min').value = D.cardioMin;
+  if (D.cardioMi) document.getElementById('cardio-mi').value = D.cardioMi;
+  if (D.cardioGoalMi) document.getElementById('cardio-goal-mi').value = D.cardioGoalMi;
+  updateCardioBar();
+
+  // Sleep
+  if (D.sleepBed) document.getElementById('sleep-bed').value = D.sleepBed;
+  if (D.sleepWake) document.getElementById('sleep-wake').value = D.sleepWake;
+  calcSleep();
+
+  // Steps
+  if (D.steps) { document.getElementById('steps-val').value = D.steps; updateStepsBar(); }
+
+  // Supps & nutrition
+  const suppMap = [
+    ['si-vitd','suppVitd'],['si-zinc','suppZinc'],['si-creat','suppCreat'],['si-mag','suppMag'],
+    ['si-prot','nutrProtein'],['si-clean','nutrClean'],['si-nojunk','nutrNojunk'],['si-noalc','nutrNoalc']
+  ];
+  suppMap.forEach(([elId, key]) => { if (D[key]) document.getElementById(elId)?.classList.add('on'); });
+
+  // PRs
+  ['bench','squat','dead','ohp'].forEach(l => {
+    if (G.prs[l]) {
+      document.getElementById('pr-'+l).textContent = G.prs[l];
+      document.getElementById('pri-'+l).value = G.prs[l];
+    }
+  });
+
+  // Nofap
+  renderNofap();
+  // Gym streak
+  renderGymStreak();
+  // Freeze
+  checkFreezeReset();
+  document.getElementById('freeze-num').textContent = G.freezeAvail ?? 1;
+}
+
+function renderAll() {
+  renderNofap();
+  renderGymStreak();
+  renderWater();
+  recalcDisc();
+  updateLevel();
+  updateDayDone();
+}
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function nav(pg) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.npill').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.bnavbtn').forEach(b => b.classList.remove('on'));
+  document.getElementById('pg-'+pg).classList.add('on');
+  document.getElementById('bn-'+pg)?.classList.add('on');
+  // Sync nav top pills
+  const pills = document.querySelectorAll('.npill');
+  const pgs = ['today','progress','schedule','history','challenges'];
+  const idx = pgs.indexOf(pg);
+  if (idx >= 0) pills[idx]?.classList.add('on');
+
+  if (pg === 'progress') { buildHeatmap(); loadBodyChart(); loadMoodChart(); }
+  if (pg === 'history') buildHistory();
+  if (pg === 'challenges') { buildStreaks(); buildWeeklyReview(); updateChallenges(); }
+}
+
+// ================================================================
+// EXPAND / COLLAPSE CARDS
+// ================================================================
+function expand(id) {
+  const bd = document.getElementById('bd-'+id);
+  const ar = document.getElementById('ar-'+id);
+  if (!bd) return;
+  bd.classList.toggle('open');
+  if (ar) ar.classList.toggle('open');
+}
+
+function e(ev) { ev.stopPropagation(); }
+
+// ================================================================
+// HABIT CHECKS
+// ================================================================
+function check(id) {
+  const was = !!D.checks[id];
+  D.checks[id] = !was;
+
+  // XP
+  if (!was) {
+    D.xp = (D.xp || 0) + XP_EACH;
+    G.totalXP = (G.totalXP || 0) + XP_EACH;
+  } else {
+    D.xp = Math.max(0, (D.xp || 0) - XP_EACH);
+    G.totalXP = Math.max(0, (G.totalXP || 0) - XP_EACH);
+  }
+
+  // Gym streak logic
+  if (id === 'gym') {
+    updateGymStreak(!was);
+  }
+
+  setCheckUI(id, D.checks[id]);
+  saveDay(TODAY, D);
+  saveGlobal(G);
+  recalcDisc();
+  updateLevel();
+  updateDayDone();
+  renderGymStreak();
+}
+
+function setCheckUI(id, checked) {
+  const btn = document.getElementById('ck-'+id);
+  const card = document.getElementById('tc-'+id);
+  if (btn) btn.classList.toggle('on', checked);
+  if (card) card.classList.toggle('done', checked);
+}
+
+// ================================================================
+// GYM STREAK — FIXED LOGIC
+// ================================================================
+function updateGymStreak(isChecking) {
+  const today = TODAY;
+  const isSunday = new Date().getDay() === 0;
+
+  if (isSunday) {
+    // Sunday is rest day — don't affect streak either way
+    return;
+  }
+
+  if (isChecking) {
+    // Checking gym today
+    const lastGymDay = G.gymLastDay;
+    if (lastGymDay) {
+      const last = new Date(lastGymDay + 'T12:00:00');
+      const now = new Date(today + 'T12:00:00');
+      const diffDays = Math.round((now - last) / 86400000);
+
+      if (diffDays === 1) {
+        // Consecutive day
+        G.gymStreak = (G.gymStreak || 0) + 1;
+      } else if (diffDays === 2) {
+        // Check if the skipped day was Sunday (rest day = allowed)
+        const skippedDate = new Date(last);
+        skippedDate.setDate(skippedDate.getDate() + 1);
+        if (skippedDate.getDay() === 0) {
+          // Skipped day was Sunday — streak continues
+          G.gymStreak = (G.gymStreak || 0) + 1;
+        } else {
+          G.gymStreak = 1;
+        }
+      } else {
+        G.gymStreak = 1;
+      }
+    } else {
+      G.gymStreak = 1;
+    }
+    G.gymLastDay = today;
+    if (G.gymStreak > (G.gymBest || 0)) G.gymBest = G.gymStreak;
+  } else {
+    // Unchecking — subtract from streak
+    if (G.gymLastDay === today) {
+      G.gymStreak = Math.max(0, (G.gymStreak || 0) - 1);
+      // Find the previous gym day
+      const prevGymDays = Object.keys(getDayLogs())
+        .filter(k => k !== today && getDayData(k).checks?.gym)
+        .sort().reverse();
+      G.gymLastDay = prevGymDays[0] || null;
+    }
+  }
+}
+
+function getDayLogs() {
+  const keys = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('apx_day_')) keys[k.replace('apx_day_','')] = true;
+  }
+  return keys;
+}
+
+function renderGymStreak() {
+  const s = G.gymStreak || 0;
+  const b = G.gymBest || 0;
+  const isSun = new Date().getDay() === 0;
+  document.getElementById('sv-gym').textContent = s;
+  document.getElementById('gym-streak-lbl').textContent = s;
+  document.getElementById('gym-streak-val').textContent = s;
+  document.getElementById('gym-best-val').textContent = b;
+  document.getElementById('sub-gym').innerHTML = isSun
+    ? `REST DAY (Sunday) · Streak: <span id="gym-streak-lbl">${s}</span>d`
+    : `Mon–Sat | Streak: <span id="gym-streak-lbl">${s}</span>d`;
+
+  // Auto-mark Sunday as rest
+  if (isSun && document.getElementById('tc-gym')) {
+    document.getElementById('tc-gym').style.opacity = '0.5';
+    const ck = document.getElementById('ck-gym');
+    if (ck) ck.style.pointerEvents = 'none';
+  }
+}
+
+// ================================================================
+// NO-FAP
+// ================================================================
+function nofapCheck() {
+  if (G.nfLastCheck === TODAY) {
+    document.getElementById('btn-nfcheck').textContent = '✓ LOGGED TODAY';
+    return;
+  }
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yKey = dateKey(yesterday);
+
+  if (G.nfLastCheck === yKey || !G.nfLastCheck) {
+    G.nfStreak = (G.nfStreak || 0) + 1;
+  } else {
+    G.nfStreak = 1;
+  }
+  if (G.nfStreak > (G.nfBest || 0)) G.nfBest = G.nfStreak;
+  G.nfLastCheck = TODAY;
+  G.totalXP = (G.totalXP || 0) + XP_EACH;
+  D.xp = (D.xp || 0) + XP_EACH;
+  saveGlobal(G);
+  saveDay(TODAY, D);
+  renderNofap();
+  updateLevel();
+  updateDayDone();
+  recalcDisc();
+  pop('nf-streak');
+}
+
+function nofapRelapse() {
+  openModal('⚠️ RELAPSE', 'Are you sure you want to reset your streak? This cannot be undone.', () => {
+    G.nfStreak = 0;
+    G.nfLastCheck = null;
+    saveGlobal(G);
+    renderNofap();
+    closeModal();
+  });
+}
+
+function renderNofap() {
+  const s = G.nfStreak || 0;
+  document.getElementById('nf-streak').textContent = s;
+  document.getElementById('nf-best').textContent = G.nfBest || 0;
+  document.getElementById('sv-nf').textContent = s;
+  const btn = document.getElementById('btn-nfcheck');
+  if (btn) btn.textContent = G.nfLastCheck === TODAY ? '✓ LOGGED TODAY' : '✓ MAINTAINED';
+}
+
+// ================================================================
+// WATER
+// ================================================================
+function addWater(oz) {
+  D.water = Math.max(0, (D.water || 0) + oz);
+  saveDay(TODAY, D);
+  renderWater();
+  pop('water-num');
+  updateDayDone();
+  recalcDisc();
+}
+
+function renderWater() {
+  const w = D.water || 0;
+  const pct = Math.min(100, (w / WATER_GOAL) * 100);
+  document.getElementById('water-num').textContent = w;
+  document.getElementById('sv-water').textContent = w;
+  document.getElementById('sub-water').textContent = `${w} / ${WATER_GOAL} oz`;
+  document.getElementById('waterfill').style.width = pct + '%';
+  document.getElementById('water-pct').textContent = Math.round(pct) + '% of goal';
+}
+
+// ================================================================
+// SLEEP
+// ================================================================
+function calcSleep() {
+  const bed = document.getElementById('sleep-bed').value;
+  const wake = document.getElementById('sleep-wake').value;
+  if (!bed || !wake) return;
+  const [bh,bm] = bed.split(':').map(Number);
+  const [wh,wm] = wake.split(':').map(Number);
+  let bMins = bh*60+bm, wMins = wh*60+wm;
+  if (wMins <= bMins) wMins += 1440;
+  const total = wMins - bMins;
+  const hrs = Math.floor(total/60), mins = total%60;
+  const el = document.getElementById('sleep-result');
+  let flag = hrs >= 8 ? '✅ Optimal' : hrs >= 7 ? '⚠️ Adequate' : '❌ Too little';
+  el.textContent = `${hrs}h ${mins}m — ${flag}`;
+  el.style.color = hrs >= 8 ? 'var(--neon)' : hrs >= 7 ? 'var(--gold)' : 'var(--red)';
+  D.sleepBed = bed; D.sleepWake = wake;
+  saveDay(TODAY, D);
+}
+
+// ================================================================
+// CARDIO
+// ================================================================
+function saveCardio() {
+  D.cardioType = document.getElementById('cardio-type').value;
+  D.cardioMin = document.getElementById('cardio-min').value;
+  D.cardioMi = document.getElementById('cardio-mi').value;
+  D.cardioGoalMi = document.getElementById('cardio-goal-mi').value;
+  updateCardioBar();
+  saveDay(TODAY, D);
+}
+
+function updateCardioBar() {
+  const mi = parseFloat(D.cardioMi) || 0;
+  const goal = parseFloat(D.cardioGoalMi) || 5;
+  const pct = Math.min(100, (mi / goal) * 100);
+  document.getElementById('cardio-goalbar').style.width = pct + '%';
+  document.getElementById('cardio-goal-lbl').textContent = Math.round(pct) + '%';
+  if (D.cardioMin) document.getElementById('sub-cardio').textContent = `${D.cardioType} · ${D.cardioMin} min · ${D.cardioMi || 0} mi`;
+}
+
+// ================================================================
+// STEPS
+// ================================================================
+function saveSteps() {
+  D.steps = document.getElementById('steps-val').value;
+  updateStepsBar();
+  saveDay(TODAY, D);
+}
+
+function updateStepsBar() {
+  const s = parseInt(D.steps) || 0;
+  const pct = Math.min(100, (s / STEPS_GOAL) * 100);
+  document.getElementById('steps-bar').style.width = pct + '%';
+  document.getElementById('steps-pct').textContent = `${Math.round(pct)}% of ${STEPS_GOAL.toLocaleString()}`;
+  document.getElementById('sub-steps').textContent = `${s.toLocaleString()} / ${STEPS_GOAL.toLocaleString()} steps`;
+}
+
+// ================================================================
+// SUPPLEMENTS / NUTRITION TOGGLES
+// ================================================================
+const suppKeyMap = {
+  'si-vitd':'suppVitd','si-zinc':'suppZinc','si-creat':'suppCreat','si-mag':'suppMag',
+  'si-prot':'nutrProtein','si-clean':'nutrClean','si-nojunk':'nutrNojunk','si-noalc':'nutrNoalc'
+};
+
+function togSupp(elId) {
+  const key = suppKeyMap[elId];
+  D[key] = !D[key];
+  document.getElementById(elId)?.classList.toggle('on', D[key]);
+  saveDay(TODAY, D);
+  recalcDisc();
+}
+
+// ================================================================
+// SLIDERS
+// ================================================================
+function sl(type) {
+  const val = parseInt(document.getElementById('sl-'+type).value);
+  document.getElementById('sv-sl-'+type).textContent = val;
+  D[type] = val;
+  saveDay(TODAY, D);
+}
+
+// ================================================================
+// TEXT INPUTS
+// ================================================================
+function saveTxt(key) {
+  const map = {gratitude:'txt-gratitude', goal:'txt-goal', win:'txt-win'};
+  D[key] = document.getElementById(map[key]).value;
+  saveDay(TODAY, D);
+}
+
+// ================================================================
+// DISCIPLINE SCORE — uses rolling 7-day average
+// ================================================================
+function recalcDisc() {
+  let totalScore = 0, days = 0;
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const k = dateKey(d);
+    const dayData = k === TODAY ? D : getDayData(k);
+    const dayScore = calcDayScore(dayData, k);
+    totalScore += dayScore;
+    days++;
+  }
+
+  const avg = days ? Math.round(totalScore / days) : 0;
+
+  document.getElementById('disc-num').textContent = avg;
+  document.getElementById('sv-disc').textContent = avg;
+  document.getElementById('discfill').style.width = avg + '%';
+
+  const tiers = [[0,'BUILD THE FOUNDATION'],[25,'GAINING MOMENTUM'],[50,'HALFWAY LOCKED IN'],[75,'ELITE CONSISTENCY'],[90,'🔥 APEX MODE ACTIVATED']];
+  let tier = tiers[0][1];
+  for (const [min, label] of tiers) { if (avg >= min) tier = label; }
+  document.getElementById('disc-tier').textContent = tier;
+}
+
+function calcDayScore(dayData, key) {
+  if (!dayData) return 0;
+  let done = 0, total = 0;
+  HABITS.forEach(h => { total++; if (dayData.checks && dayData.checks[h]) done++; });
+  // Water
+  total++;
+  if ((dayData.water || 0) >= WATER_GOAL) done++;
+  // Nofap
+  total++;
+  if (G.nfLastCheck && G.nfLastCheck >= key) done++; // crude but effective
+  return Math.round((done / total) * 100);
+}
+
+// ================================================================
+// DAY DONE COUNTER
+// ================================================================
+function updateDayDone() {
+  let done = 0;
+  const total = HABITS.length + 2; // habits + water goal + nofap
+  HABITS.forEach(h => { if (D.checks[h]) done++; });
+  if ((D.water || 0) >= WATER_GOAL) done++;
+  if (G.nfLastCheck === TODAY) done++;
+  document.getElementById('day-done').textContent = `${done}/${total} done`;
+}
+
+// ================================================================
+// LEVEL / XP SYSTEM
+// ================================================================
+function updateLevel() {
+  const xp = G.totalXP || 0;
+  let lvlIdx = 0;
+  for (let i = LEVELS.length - 1; i >= 0; i--) {
+    if (xp >= LEVELS[i].min) { lvlIdx = i; break; }
+  }
+  const lvl = LEVELS[lvlIdx];
+  const next = LEVELS[Math.min(lvlIdx + 1, LEVELS.length - 1)];
+  const pct = lvlIdx === LEVELS.length - 1 ? 100 :
+    Math.min(100, ((xp - lvl.min) / (next.min - lvl.min)) * 100);
+
+  const prevLvlName = localStorage.getItem('apx_curlvl') || 'CIVILIAN';
+  document.getElementById('lc-rank').textContent = lvl.name;
+  document.getElementById('lc-xp').textContent = `${xp} / ${next.min} XP`;
+  document.getElementById('lc-today').textContent = `+${D.xp || 0} XP today`;
+  document.getElementById('xpfill').style.width = pct + '%';
+
+  // Level up animation
+  if (prevLvlName !== lvl.name && prevLvlName !== 'CIVILIAN') {
+    document.getElementById('lvl-sub').textContent = `You are now a ${lvl.name}`;
+    document.getElementById('lvlup').classList.add('on');
+  }
+  localStorage.setItem('apx_curlvl', lvl.name);
+}
+
+function closeLvlUp() { document.getElementById('lvlup').classList.remove('on'); }
+
+// ================================================================
+// FREEZE
+// ================================================================
+function checkFreezeReset() {
+  const now = new Date();
+  const wk = `${now.getFullYear()}-W${getWeek(now)}`;
+  if (G.freezeWeek !== wk) {
+    G.freezeAvail = 1;
+    G.freezeWeek = wk;
+    saveGlobal(G);
+  }
+}
+
+function getWeek(d) {
+  const jan1 = new Date(d.getFullYear(), 0, 1);
+  return Math.ceil((((d - jan1) / 86400000) + jan1.getDay() + 1) / 7);
+}
+
+function useFreeze() {
+  checkFreezeReset();
+  if (!G.freezeAvail) { alert('No freezes left this week. Resets Monday.'); return; }
+  openModal('❄️ USE STREAK FREEZE', 'This protects your streaks for today. One per week. Use it wisely.', () => {
+    G.freezeAvail = 0;
+    saveGlobal(G);
+    document.getElementById('freeze-num').textContent = 0;
+    closeModal();
+    alert('❄️ Streaks protected today!');
+  });
+}
+
+// ================================================================
+// PRs
+// ================================================================
+function savePR(lift) {
+  const v = document.getElementById('pri-'+lift).value;
+  G.prs[lift] = v;
+  document.getElementById('pr-'+lift).textContent = v || '—';
+  saveGlobal(G);
+  pop('pr-'+lift);
+}
+
+// ================================================================
+// BODY LOG
+// ================================================================
+function logBody() {
+  const snap = {
+    date: TODAY,
+    weight: document.getElementById('bw').value,
+    chest: document.getElementById('bc').value,
+    waist: document.getElementById('bwai').value,
+    arms: document.getElementById('ba').value
+  };
+  if (!snap.weight) { alert('Enter at least your weight.'); return; }
+  G.bodyLog = (G.bodyLog || []).filter(e => e.date !== TODAY);
+  G.bodyLog.push(snap);
+  G.bodyLog.sort((a,b) => a.date < b.date ? -1 : 1);
+  saveGlobal(G);
+  loadBodyChart();
+  alert('✅ Measurements saved!');
+}
+
+// ================================================================
+// HEATMAP — with month labels and day labels
+// ================================================================
+function buildHeatmap() {
+  const hmEl = document.getElementById('heatmap');
+  const daysEl = document.getElementById('hm-days');
+  const monthsEl = document.getElementById('hm-months');
+  if (!hmEl) return;
+
+  // Build 13 weeks (91 days), each column = 1 week
+  const NUM_WEEKS = 13;
+  const today = new Date();
+  // Align to last Sunday
+  const startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - (NUM_WEEKS * 7) + 1);
+
+  // Day labels (left side)
+  daysEl.innerHTML = '';
+  ['','Mon','','Wed','','Fri',''].forEach(lbl => {
+    const d = document.createElement('div');
+    d.className = 'hm-day';
+    d.textContent = lbl;
+    daysEl.appendChild(d);
+  });
+
+  // Build grid: 7 rows × 13 cols
+  const grid = [];
+  for (let col = 0; col < NUM_WEEKS; col++) {
+    const colEl = document.createElement('div');
+    colEl.className = 'hm-row';
+    colEl.style.flexDirection = 'column';
+    colEl.style.gap = '3px';
+    for (let row = 0; row < 7; row++) {
+      const dayOffset = col * 7 + row;
+      const d = new Date(startDate);
+      d.setDate(d.getDate() + dayOffset);
+      if (d > today) { colEl.appendChild(document.createElement('div')); continue; }
+      const key = dateKey(d);
+      const dayData = key === TODAY ? D : getDayData(key);
+      const score = calcDayScore(dayData, key);
+      const s = score >= 95 ? 5 : score >= 75 ? 4 : score >= 50 ? 3 : score >= 25 ? 2 : score > 0 ? 1 : 0;
+      const cell = document.createElement('div');
+      cell.className = 'hm-cell';
+      if (s) cell.dataset.s = s;
+      cell.title = `${key}: ${score}% complete`;
+      colEl.appendChild(cell);
+    }
+    grid.push(colEl);
+  }
+
+  hmEl.innerHTML = '';
+  hmEl.style.display = 'flex';
+  hmEl.style.gap = '3px';
+  grid.forEach(col => hmEl.appendChild(col));
+
+  // Month labels
+  monthsEl.innerHTML = '';
+  let lastMonth = -1;
+  for (let col = 0; col < NUM_WEEKS; col++) {
+    const d = new Date(startDate);
+    d.setDate(d.getDate() + col * 7);
+    const m = d.getMonth();
+    const span = document.createElement('div');
+    span.className = 'hm-month';
+    span.style.width = '14px';
+    if (m !== lastMonth) {
+      const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      span.textContent = MONTHS[m];
+      lastMonth = m;
+    }
+    monthsEl.appendChild(span);
+  }
+}
+
+// ================================================================
+// HISTORY
+// ================================================================
+function buildHistory() {
+  const container = document.getElementById('history-list');
+  const allKeys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('apx_day_')) allKeys.push(k.replace('apx_day_',''));
+  }
+  allKeys.sort().reverse();
+  const recent = allKeys.slice(0, 60);
+
+  if (recent.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;font-size:13px;color:var(--text2)">No history yet. Complete your first day to start building your record.</div>';
+    return;
+  }
+
+  const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  container.innerHTML = recent.map(k => {
+    const d = getDayData(k);
+    const dateObj = new Date(k + 'T12:00:00');
+    const dateStr = `${DAYS[dateObj.getDay()]}, ${MONTHS[dateObj.getMonth()]} ${dateObj.getDate()}`;
+    const score = calcDayScore(d, k);
+    let done = 0, total = HABITS.length + 1;
+    HABITS.forEach(h => { if (d.checks && d.checks[h]) done++; });
+    if ((d.water || 0) >= WATER_GOAL) done++;
+    const goalStr = d.goal ? `🎯 "${d.goal.slice(0,60)}${d.goal.length > 60 ? '…' : ''}"` : '';
+    return `<div class="hentry">
+      <div class="hentry-top">
+        <div class="hentry-date">${dateStr.toUpperCase()}</div>
+        <div class="hentry-score">${score}%</div>
+      </div>
+      <div class="hentry-meta">${done}/${total} habits · 💧${d.water||0}oz · 😊${d.mood||'-'} · ⚡${d.energy||'-'}</div>
+      ${goalStr ? `<div class="hentry-note">${goalStr}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ================================================================
+// CHARTS
+// ================================================================
+function loadBodyChart() {
+  const log = (G.bodyLog || []).slice(-12);
+  const container = document.getElementById('body-chart');
+  if (!container) return;
+  if (log.length < 2) { container.innerHTML = '<div class="chart-empty">📈 Log measurements weekly to see your weight chart</div>'; return; }
+
+  const weights = log.map(e => parseFloat(e.weight) || 0).filter(w => w > 0);
+  if (weights.length < 2) { container.innerHTML = '<div class="chart-empty">📈 Log at least 2 weight entries to see chart</div>'; return; }
+
+  const W = 280, H = 80;
+  const minW = Math.min(...weights) - 3, maxW = Math.max(...weights) + 3;
+  const range = maxW - minW || 1;
+
+  const pts = weights.map((v, i) => {
+    const x = 10 + (i / (weights.length - 1)) * (W - 20);
+    const y = H - 10 - ((v - minW) / range) * (H - 20);
+    return {x, y, v};
+  });
+
+  const pathD = pts.map((p,i) => `${i===0?'M':'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const areaD = `${pathD} L${pts[pts.length-1].x.toFixed(1)},${H} L${pts[0].x.toFixed(1)},${H} Z`;
+
+  const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const labels = log.map(e => {
+    const d = new Date(e.date + 'T12:00:00');
+    return MONTHS[d.getMonth()]+' '+d.getDate();
+  });
+
+  container.innerHTML = `
+    <div class="chart-title">WEIGHT OVER TIME</div>
+    <svg class="chart" viewBox="0 0 ${W} ${H+20}">
+      <defs>
+        <linearGradient id="wgrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--neon)" stop-opacity="0.2"/>
+          <stop offset="100%" stop-color="var(--neon)" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="${areaD}" fill="url(#wgrad)"/>
+      <path d="${pathD}" fill="none" stroke="var(--neon)" stroke-width="2" stroke-linejoin="round"/>
+      ${pts.map(p => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="var(--neon)"/>
+        <text x="${p.x.toFixed(1)}" y="${(p.y - 6).toFixed(1)}" text-anchor="middle" fill="var(--text2)" font-size="8" font-family="Barlow Condensed">${p.v}</text>`).join('')}
+      ${labels.length <= 6 ? labels.map((lbl,i) => {
+        const x = 10 + (i / (labels.length - 1)) * (W - 20);
+        return `<text x="${x.toFixed(1)}" y="${H+14}" text-anchor="middle" fill="var(--text2)" font-size="7" font-family="Barlow Condensed">${lbl}</text>`;
+      }).join('') : ''}
+    </svg>
+  `;
+}
+
+function loadMoodChart() {
+  const container = document.getElementById('mood-chart');
+  if (!container) return;
+  const days = 14;
+  const data = [];
+  for (let i = days-1; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const k = dateKey(d);
+    const dd = k === TODAY ? D : getDayData(k);
+    data.push({ k, mood: dd.mood || null, energy: dd.energy || null, label: d.getDate()+''});
+  }
+
+  const hasMood = data.some(d => d.mood);
+  if (!hasMood) { container.innerHTML = '<div class="chart-empty">📊 Log mood daily to see your 14-day trend</div>'; return; }
+
+  const W = 280, H = 80;
+
+  function makePath(arr, key) {
+    const pts = arr.map((d,i) => ({ x: 10+(i/(arr.length-1))*(W-20), y: d[key] ? H-10-((d[key]-1)/4)*(H-20) : null }));
+    const valid = pts.filter(p => p.y !== null);
+    if (valid.length < 2) return '';
+    return valid.map((p,i)=>`${i===0?'M':'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  }
+
+  const moodPath = makePath(data, 'mood');
+  const energyPath = makePath(data, 'energy');
+
+  // Y axis labels
+  const yLabels = ['1','2','3','4','5'].map((v,i) => {
+    const y = H - 10 - (i / 4) * (H - 20);
+    return `<text x="3" y="${y.toFixed(1)}" fill="var(--text2)" font-size="7" font-family="Barlow Condensed" dominant-baseline="middle">${v}</text>`;
+  }).join('');
+
+  // X axis: show every other date
+  const xLabels = data.map((d,i) => {
+    if (i % 3 !== 0) return '';
+    const x = 10+(i/(data.length-1))*(W-20);
+    return `<text x="${x.toFixed(1)}" y="${H+14}" text-anchor="middle" fill="var(--text2)" font-size="7" font-family="Barlow Condensed">${d.label}</text>`;
+  }).join('');
+
+  // Gridlines
+  const gridLines = [1,2,3,4,5].map(v => {
+    const y = H - 10 - ((v-1)/4)*(H-20);
+    return `<line x1="10" y1="${y.toFixed(1)}" x2="${W-10}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="chart-title">MOOD & ENERGY — LAST 14 DAYS</div>
+    <svg class="chart" viewBox="0 0 ${W} ${H+22}">
+      ${gridLines}
+      ${yLabels}
+      ${moodPath ? `<path d="${moodPath}" fill="none" stroke="var(--neon)" stroke-width="2" stroke-linejoin="round"/>` : ''}
+      ${energyPath ? `<path d="${energyPath}" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linejoin="round" stroke-dasharray="4,2"/>` : ''}
+      ${xLabels}
+    </svg>
+    <div style="display:flex;gap:14px;justify-content:center;margin-top:4px">
+      <span style="font-size:10px;color:var(--neon)">— Mood</span>
+      <span style="font-size:10px;color:var(--cyan)">- - Energy</span>
+    </div>
+  `;
+}
+
+// ================================================================
+// CHALLENGES
+// ================================================================
+function startChallenge(days) {
+  if (!G.challenges) G.challenges = {};
+  if (G.challenges[days]?.active) { alert(`${days}-day challenge already running!`); return; }
+  G.challenges[days] = { active: true, start: TODAY, days };
+  saveGlobal(G);
+  updateChallenges();
+}
+
+function updateChallenges() {
+  if (!G.challenges) return;
+  [30,90].forEach(days => {
+    const ch = G.challenges[days];
+    if (!ch?.active) return;
+    const start = new Date(ch.start + 'T12:00:00');
+    const now = new Date();
+    const elapsed = Math.max(0, Math.floor((now - start) / 86400000));
+    const pct = Math.min(100, (elapsed / days) * 100);
+    document.getElementById(`ch${days}-fill`).style.width = pct + '%';
+    document.getElementById(`ch${days}-status`).textContent = elapsed >= days ? '✅ COMPLETED!' : `Day ${elapsed} of ${days}`;
+    document.getElementById(`btn-ch${days}`).textContent = elapsed >= days ? 'COMPLETED ✓' : 'IN PROGRESS';
+  });
+}
+
+// ================================================================
+// WEEKLY REVIEW
+// ================================================================
+function buildWeeklyReview() {
+  const container = document.getElementById('weekly-review');
+  let gymDays=0, totalWater=0, totalMood=0, moodCount=0, totalEnergy=0, xpThisWeek=0;
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const k = dateKey(d);
+    const dd = k === TODAY ? D : getDayData(k);
+    if (dd.checks?.gym) gymDays++;
+    totalWater += dd.water || 0;
+    if (dd.mood) { totalMood += dd.mood; moodCount++; }
+    if (dd.energy) { totalEnergy += dd.energy; }
+    xpThisWeek += dd.xp || 0;
+  }
+
+  const avgWater = Math.round(totalWater / 7);
+  const avgMood = moodCount ? (totalMood/moodCount).toFixed(1) : '—';
+  const avgEnergy = moodCount ? (totalEnergy/moodCount).toFixed(1) : '—';
+
+  container.innerHTML = `
+    <div class="rev-grid">
+      <div class="revitem"><div class="revval">${gymDays}/6</div><div class="revlbl">Gym Days</div></div>
+      <div class="revitem"><div class="revval">${avgWater}oz</div><div class="revlbl">Avg Water</div></div>
+      <div class="revitem"><div class="revval">${avgMood}/5</div><div class="revlbl">Avg Mood</div></div>
+      <div class="revitem"><div class="revval">+${xpThisWeek}</div><div class="revlbl">XP This Week</div></div>
+    </div>
+    <div style="margin-top:12px">
+      <label class="ilabel">Weekly Reflection</label>
+      <textarea id="wk-reflect" placeholder="What did you do well this week? What needs improvement?" style="margin-top:4px" oninput="saveReflect()">${localStorage.getItem('apx_reflect')||''}</textarea>
+    </div>
+  `;
+}
+
+function saveReflect() {
+  localStorage.setItem('apx_reflect', document.getElementById('wk-reflect')?.value || '');
+}
+
+// ================================================================
+// STREAKS DISPLAY
+// ================================================================
+function buildStreaks() {
+  const el = document.getElementById('all-streaks');
+  if (!el) return;
+
+  // Count consecutive streaks for each habit
+  const streaks = {};
+  HABITS.forEach(h => {
+    let streak = 0;
+    for (let i = 0; i < 60; i++) {
+      const d = new Date(); d.setDate(d.getDate()-i);
+      const k = dateKey(d);
+      const dd = k === TODAY ? D : getDayData(k);
+      if (dd.checks?.[h]) streak++;
+      else break;
+    }
+    streaks[h] = streak;
+  });
+
+  const icons = {gym:'🏋️',cardio:'🏃',cold:'🧊',tan:'☀️',stretch:'🧘',steps:'👟',sleep:'😴',nutrition:'🍗',supps:'💊',mood:'📊',gratitude:'🙏',intention:'📝'};
+  const labels = {gym:'Gym',cardio:'Cardio',cold:'Cold',tan:'Sun',stretch:'Stretch',steps:'Steps',sleep:'Sleep',nutrition:'Nutrition',supps:'Supps',mood:'Mood',gratitude:'Gratitude',intention:'Intention'};
+
+  el.innerHTML = `
+    <div style="margin-bottom:8px">
+      <span class="sbadge">⚡ No-Fap <span class="n">${G.nfStreak||0}</span>d</span>
+      <span class="sbadge">🏋️ Gym <span class="n">${G.gymStreak||0}</span>d</span>
+    </div>
+    <div>
+      ${HABITS.map(h => `<span class="sbadge">${icons[h]} ${labels[h]} <span class="n">${streaks[h]}</span>d</span>`).join('')}
+    </div>
+  `;
+}
+
+// ================================================================
+// MODAL
+// ================================================================
+function openModal(title, body, cb) {
+  document.getElementById('m-title').textContent = title;
+  document.getElementById('m-body').textContent = body;
+  modalCb = cb;
+  document.getElementById('modal').classList.add('on');
+}
+function closeModal() { document.getElementById('modal').classList.remove('on'); modalCb = null; }
+function doModal() { if (modalCb) modalCb(); }
+
+// ================================================================
+// POP ANIMATION
+// ================================================================
+function pop(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+}
+
+// ================================================================
+// AUTO SAVE on page hide
+// ================================================================
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { saveDay(TODAY, D); saveGlobal(G); }
+});
+</script>
+</body>
+</html>
